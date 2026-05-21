@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Lato:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #E60023;
+  --primary-dark: #AD081B;
+  --coral: #FF6B6B;
+  --dark: #111111;
+  --dark-soft: #1a1a1a;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --border: #EFEFEF;
+  --soft-bg: #FAFAFA;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #FFFFFF;
+  color: #111111;
+  font-family: 'Inter', 'Lato', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+.section-divider {
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--coral));
+  margin: 16px auto 32px;
+  border-radius: 2px;
+}
+
+@layer utilities {
+  .text-shadow { text-shadow: 0 2px 20px rgba(0,0,0,0.5); }
+  .text-shadow-sm { text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
+}
+
+/* Selection color */
+::selection {
+  background: rgba(230, 0, 35, 0.15);
+  color: #111111;
+}
+.custom-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: #ef233c;
+  border-radius: 20px;
+}
