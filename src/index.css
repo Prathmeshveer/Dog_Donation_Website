@@ -73,3 +73,7 @@ body {
   background: #ef233c;
   border-radius: 20px;
 }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}

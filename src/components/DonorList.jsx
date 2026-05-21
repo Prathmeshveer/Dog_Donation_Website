@@ -19,8 +19,9 @@ export default function DonorList() {
   const fetchDonors = async () => {
     const { data, error } = await supabase
       .from("donations")
-      .select("id, full_name, amount, created_at, message")
-      .order("created_at", { ascending: false })
+      .select("id, full_name, amount, created_at, message, status")
+      .eq("status", "verified")
+      .order("verified_at", { ascending: false })
       .limit(50);
 
     if (error) console.log("Fetch error:", error);
@@ -36,9 +37,17 @@ export default function DonorList() {
       .channel("donations-realtime")
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "donations" },
+        { event: "UPDATE", schema: "public", table: "donations" },
         (payload) => {
-          setDonors((prev) => [payload.new, ...prev]);
+          if (payload.new.status === "verified") {
+            setDonors((prev) => {
+              const exists = prev.find((d) => d.id === payload.new.id);
+              if (exists) return prev;
+              return [payload.new, ...prev];
+            });
+          } else {
+            setDonors((prev) => prev.filter((d) => d.id !== payload.new.id));
+          }
         }
       )
       .subscribe();
@@ -101,6 +110,7 @@ export default function DonorList() {
                       key={donor.id}
                       initial={{ opacity: 0, y: -10 }}
                       animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.4 }}
                       className="grid grid-cols-3 gap-4 px-6 py-5 hover:bg-primary/5 transition-colors"
                     >
@@ -108,10 +118,9 @@ export default function DonorList() {
                         <p className="font-display font-bold text-dark text-sm">
                           {donor.full_name}
                         </p>
-
                         {donor.message && (
                           <p className="text-textSecondary text-xs mt-1 line-clamp-1 italic">
-                            “{donor.message}”
+                            "{donor.message}"
                           </p>
                         )}
                       </div>
