@@ -49,6 +49,17 @@ export default function Donate() {
     if (file) setScreenshot(file);
   };
 
+  const handleMobileChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+
+    if (value.length <= 10) {
+      setForm((f) => ({
+        ...f,
+        mobile: value,
+      }));
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -65,6 +76,11 @@ export default function Donate() {
 
     if (!form.mobile.trim()) {
       setError("Please enter your mobile number.");
+      return;
+    }
+
+    if (form.mobile.length !== 10) {
+      setError("Mobile number must be exactly 10 digits.");
       return;
     }
 
@@ -336,41 +352,51 @@ export default function Donate() {
                   )}
                 </div>
 
-                {[
-                  {
-                    key: "full_name",
-                    label: "Full Name *",
-                    type: "text",
-                    placeholder: "Your full name",
-                  },
-                  {
-                    key: "email",
-                    label: "Email *",
-                    type: "email",
-                    placeholder: "your@email.com",
-                  },
-                  {
-                    key: "mobile",
-                    label: "Mobile Number *",
-                    type: "tel",
-                    placeholder: "10-digit mobile number",
-                  },
-                ].map(({ key, label, type, placeholder }) => (
-                  <div key={key}>
-                    <label className="text-dark font-display text-sm font-semibold mb-1.5 block">
-                      {label}
-                    </label>
-                    <input
-                      type={type}
-                      placeholder={placeholder}
-                      value={form[key]}
-                      onChange={(e) =>
-                        setForm((f) => ({ ...f, [key]: e.target.value }))
-                      }
-                      className="w-full border-2 border-cardBorder rounded-xl px-4 py-3 text-sm font-body text-dark focus:outline-none focus:border-primary transition-colors bg-white"
-                    />
-                  </div>
-                ))}
+                <div>
+                  <label className="text-dark font-display text-sm font-semibold mb-1.5 block">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Your full name"
+                    value={form.full_name}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, full_name: e.target.value }))
+                    }
+                    className="w-full border-2 border-cardBorder rounded-xl px-4 py-3 text-sm font-body text-dark focus:outline-none focus:border-primary transition-colors bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-dark font-display text-sm font-semibold mb-1.5 block">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="your@email.com"
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, email: e.target.value }))
+                    }
+                    className="w-full border-2 border-cardBorder rounded-xl px-4 py-3 text-sm font-body text-dark focus:outline-none focus:border-primary transition-colors bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-dark font-display text-sm font-semibold mb-1.5 block">
+                    Mobile Number *
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="10-digit mobile number"
+                    value={form.mobile}
+                    onChange={handleMobileChange}
+                    maxLength={10}
+                    pattern="[0-9]{10}"
+                    inputMode="numeric"
+                    className="w-full border-2 border-cardBorder rounded-xl px-4 py-3 text-sm font-body text-dark focus:outline-none focus:border-primary transition-colors bg-white"
+                  />
+                </div>
 
                 <div>
                   <label className="text-dark font-display text-sm font-semibold mb-1.5 block">
