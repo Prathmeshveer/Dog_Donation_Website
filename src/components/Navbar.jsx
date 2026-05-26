@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Camera } from "lucide-react";
 
 const links = [
   { name: "About Us", id: "about" },
@@ -15,28 +16,38 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAdminHint, setShowAdminHint] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isPhotosPage = location.pathname === "/photos";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     onScroll();
-
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const isSubPage = location.pathname !== "/";
+  const solidNav = scrolled || menuOpen || isSubPage;
+
   const goToSection = (id) => {
     setMenuOpen(false);
+    if (isSubPage) {
+      navigate("/");
+      setTimeout(() => {
+        const section = document.getElementById(id);
+        if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 400);
+    } else {
+      setTimeout(() => {
+        const section = document.getElementById(id);
+        if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 150);
+    }
+  };
 
-    setTimeout(() => {
-      const section = document.getElementById(id);
-
-      if (section) {
-        section.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      }
-    }, 150);
+  const goPhotos = () => {
+    setMenuOpen(false);
+    navigate("/photos");
   };
 
   const goAdmin = () => {
@@ -50,12 +61,14 @@ export default function Navbar() {
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       className={`fixed top-0 left-0 right-0 z-[9999] transition-all duration-500 ${
-        scrolled || menuOpen
+        solidNav
           ? "bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,0.08)] py-3"
           : "bg-gradient-to-b from-black/50 to-transparent py-5"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+
+        {/* Logo */}
         <div
           className="flex items-center gap-2.5 group relative"
           onMouseEnter={() => setShowAdminHint(true)}
@@ -63,20 +76,19 @@ export default function Navbar() {
         >
           <button
             type="button"
-            onClick={() => goToSection("hero")}
+            onClick={() => isSubPage ? navigate("/") : goToSection("hero")}
             className="flex items-center gap-2.5"
           >
             <span
               className={`font-display text-2xl font-black tracking-tight transition-colors duration-300 ${
-                scrolled || menuOpen ? "text-primary" : "text-white"
+                solidNav ? "text-primary" : "text-white"
               }`}
             >
               VISAVA
             </span>
-
             <span
               className={`text-xs font-display font-medium tracking-widest hidden sm:block transition-colors duration-300 ${
-                scrolled || menuOpen ? "text-textSecondary" : "text-white/70"
+                solidNav ? "text-textSecondary" : "text-white/70"
               }`}
             >
               SHWAN ASHRAM
@@ -94,7 +106,7 @@ export default function Navbar() {
                 onClick={goAdmin}
                 title="Admin Login"
                 className={`ml-1 p-1.5 rounded-full transition-colors duration-200 ${
-                  scrolled || menuOpen
+                  solidNav
                     ? "text-gray-300 hover:text-gray-500 hover:bg-gray-100"
                     : "text-white/30 hover:text-white/70 hover:bg-white/10"
                 }`}
@@ -105,6 +117,7 @@ export default function Navbar() {
           </AnimatePresence>
         </div>
 
+        {/* Desktop links */}
         <div className="hidden lg:flex items-center gap-8">
           {links.map((link) => (
             <button
@@ -112,12 +125,28 @@ export default function Navbar() {
               key={link.id}
               onClick={() => goToSection(link.id)}
               className={`text-sm font-display font-medium tracking-wide transition-all duration-300 hover:text-primary ${
-                scrolled ? "text-dark" : "text-white/90"
+                solidNav ? "text-dark" : "text-white/90"
               }`}
             >
               {link.name}
             </button>
           ))}
+
+          {/* Photos link */}
+          <button
+            type="button"
+            onClick={goPhotos}
+            className={`flex items-center gap-1.5 text-sm font-display font-medium tracking-wide transition-all duration-300 hover:text-primary ${
+              isPhotosPage
+                ? "text-primary"
+                : solidNav
+                ? "text-dark"
+                : "text-white/90"
+            }`}
+          >
+            <Camera size={14} strokeWidth={2.2} />
+            Photos
+          </button>
 
           <button
             type="button"
@@ -128,30 +157,20 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Hamburger */}
         <button
           type="button"
           aria-label="Toggle menu"
           className="lg:hidden flex flex-col gap-1.5 p-2 relative z-[10000]"
           onClick={() => setMenuOpen((prev) => !prev)}
         >
-          <span
-            className={`block w-6 h-0.5 transition-all duration-300 ${
-              scrolled || menuOpen ? "bg-dark" : "bg-white"
-            } ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
-          />
-          <span
-            className={`block w-6 h-0.5 transition-all duration-300 ${
-              scrolled || menuOpen ? "bg-dark" : "bg-white"
-            } ${menuOpen ? "opacity-0" : ""}`}
-          />
-          <span
-            className={`block w-6 h-0.5 transition-all duration-300 ${
-              scrolled || menuOpen ? "bg-dark" : "bg-white"
-            } ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
-          />
+          <span className={`block w-6 h-0.5 transition-all duration-300 ${solidNav ? "bg-dark" : "bg-white"} ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
+          <span className={`block w-6 h-0.5 transition-all duration-300 ${solidNav ? "bg-dark" : "bg-white"} ${menuOpen ? "opacity-0" : ""}`} />
+          <span className={`block w-6 h-0.5 transition-all duration-300 ${solidNav ? "bg-dark" : "bg-white"} ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
         </button>
       </div>
 
+      {/* Mobile menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -172,6 +191,18 @@ export default function Navbar() {
                   {link.name}
                 </button>
               ))}
+
+              {/* Photos in mobile menu */}
+              <button
+                type="button"
+                onClick={goPhotos}
+                className={`flex items-center gap-2 text-base font-display font-medium tracking-wide text-left py-3 border-b border-cardBorder transition-colors ${
+                  isPhotosPage ? "text-primary" : "text-dark hover:text-primary"
+                }`}
+              >
+                <Camera size={16} strokeWidth={2.2} />
+                Photos
+              </button>
 
               <button
                 type="button"

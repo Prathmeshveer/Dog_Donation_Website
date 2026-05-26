@@ -10,6 +10,7 @@ import Donate from "./components/Donate";
 import DonorList from "./components/DonorList";
 import Contact from "./components/Contact";
 import Admin from "./components/Admin";
+import Photos from "./components/Photos";
 
 function MainSite() {
   return (
@@ -34,6 +35,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<MainSite />} />
         <Route path="/admin" element={<Admin />} />
+        <Route
+          path="/photos"
+          element={
+            <>
+              <Navbar />
+              <Photos />
+            </>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
