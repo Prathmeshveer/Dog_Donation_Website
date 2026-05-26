@@ -36,7 +36,7 @@ async function supabaseStorageUpload(bucket, path, file) {
 }
 
 const ADMIN_PASSWORD = "visava2024";
-const tabs = ["Donations", "QR Code", "Gallery", "Settings"];
+const tabs = ["Donations", "QR Code", "Gallery"];
 
 const statusColors = {
   pending: { bg: "#FFF3CD", text: "#856404", label: "Pending" },
